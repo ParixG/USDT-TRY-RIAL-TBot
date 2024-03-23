@@ -68,11 +68,15 @@ namespace tBot
         public static async Task ErrorHandler(ITelegramBotClient bot, Exception exception, CancellationToken token)
         {
             Console.WriteLine(exception.Message);
-            Program.RunBot();
+            Program.RunBot(true);
         }
         public static async Task UpdateHandlerDebug(ITelegramBotClient botClient, Update update, CancellationToken token)
         {
             Console.WriteLine("Fixed.");
+        }
+        public static async Task ErrorHandlerDebug(ITelegramBotClient bot, Exception exception, CancellationToken token)
+        {
+            Console.WriteLine(exception.Message);
         }
     }
 }

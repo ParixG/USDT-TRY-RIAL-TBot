@@ -10,7 +10,7 @@ namespace tBot
             public string ApiKey { get; set; }
         }
 
-        public static void RunBot()
+        public static void RunBot(bool run)
         {
             var config = LoadConfig();
 
@@ -23,22 +23,37 @@ namespace tBot
                 SaveConfig(config);
             }
 
-            SrartBot(config.ApiKey);
-            Console.WriteLine("Press ant key to STOP.");
+            if (run)
+            {
+                SrartBot(config.ApiKey);
+            }  
+            else if (run==false)
+            {
+                StartDebug(config.ApiKey);
+            }
+                
+            Console.WriteLine("Press any key to STOP.");
             Console.ReadKey();
+        }
+        static async Task StartDebug(string api)
+        {
+            TelegramBotClient botClient = new TelegramBotClient(api);
+            botClient.StartReceiving(ClientBot.UpdateHandlerDebug, ClientBot.ErrorHandlerDebug);
+            Console.WriteLine("Debug Running...");
         }
         public static async Task SrartBot(string api)
         {
             TelegramBotClient botClient = new TelegramBotClient(api);
             botClient.StartReceiving(ClientBot.UpdateHandler, ClientBot.ErrorHandler);
-            Console.WriteLine("Running...");
+            Console.WriteLine("Bot Running...");
         }
         private const string ConfigFilePath = "appsettings.json";
 
         public static void Main(string[] args)
         {
             Console.WriteLine("1. Run Bot");
-            Console.WriteLine("2. Reset Configuration");
+            Console.WriteLine("2. Debug Bot");
+            Console.WriteLine("3. Reset Configuration");
 
             int choice;
             if (int.TryParse(Console.ReadLine(), out choice))
@@ -46,10 +61,14 @@ namespace tBot
                 switch (choice)
                 {
                     case 1:
-                        RunBot();
+                        RunBot(true);
                         break;
                     case 2:
+                        RunBot(false);
+                        break;
+                    case 3:
                         ResetConfig();
+                        RunBot(true);
                         break;
                     default:
                         Console.WriteLine("Invalid choice.");
@@ -60,7 +79,6 @@ namespace tBot
             {
                 Console.WriteLine("Invalid choice.");
             }
-            RunBot();
         }
 
         private static BotSetup LoadConfig()
